@@ -339,6 +339,7 @@ mem uninstall
 rm -f ~/.local/bin/mem
 rm -rf ~/.ai-memoria
 ```
+---
 
 ## License
 
