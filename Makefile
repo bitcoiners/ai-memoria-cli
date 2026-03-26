@@ -58,3 +58,7 @@ coverage:
 dev: build
 	@echo "Running development build..."
 	@./bin/$(BINARY_NAME) --help
+
+# Create GitHub release
+release:
+	./release.sh $(VERSION)
