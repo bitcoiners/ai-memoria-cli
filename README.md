@@ -11,10 +11,30 @@ curl -sSL https://raw.githubusercontent.com/bitcoiners/ai-memoria-cli/main/get.s
 
 ### Option 2: Download from GitHub Releases
 1. Download the binary for your platform from [releases](https://github.com/bitcoiners/ai-memoria-cli/releases)
-2. Run the installer:
+2. Install manually:
+
+   **Linux/macOS:**
    \`\`\`bash
-   chmod +x install.sh
-   ./install.sh
+   # Download (example for Linux amd64)
+   wget https://github.com/bitcoiners/ai-memoria-cli/releases/download/v0.2.0/mem-linux-amd64 -O mem
+   
+   # Make executable
+   chmod +x mem
+   
+   # Move to a directory in your PATH
+   mkdir -p ~/.local/bin
+   mv mem ~/.local/bin/
+   
+   # Verify installation
+   mem --version
+   \`\`\`
+
+   **Windows:**
+   \`\`\`powershell
+   # Download mem-windows-amd64.exe
+   # Rename to mem.exe
+   # Move to a directory in your PATH, e.g., C:\Users\YourName\bin\
+   # Add that directory to your PATH environment variable
    \`\`\`
 
 ### Option 3: Build from Source
@@ -57,7 +77,7 @@ Binaries will be in the `bin/` directory:
 ### Build Release Package
 \`\`\`bash
 # Build with version tag
-./build-release.sh v1.0.0
+./release.sh v1.0.0
 
 # Or use make
 make release VERSION=v1.0.0
@@ -122,7 +142,7 @@ git push origin v0.1.0
 #### Step 3: Build binaries for the release
 \`\`\`bash
 # Build all platform binaries
-./build-release.sh v0.1.0
+./release.sh v0.1.0
 
 # Or use make
 make release VERSION=v0.1.0
@@ -310,9 +330,8 @@ make coverage
 ├── Makefile            # Build automation
 ├── go.mod              # Go module definition
 ├── main.go             # Entry point
-├── install.sh          # Binary installer
+├── install.sh          # Binary installer (for source builds)
 ├── get.sh              # One-liner installer
-├── build-release.sh    # Release builder
 ├── release.sh          # GitHub release automation
 ├── CHANGELOG.md        # Version history
 └── README.md           # This file
@@ -329,17 +348,16 @@ make coverage
 
 ## Uninstall
 
-To completely remove AI Memoria CLI and its configuration:
+To completely remove AI Memoria CLI:
 
-```bash
+\`\`\`bash
 # If you have the CLI installed
 mem uninstall
 
 # Or manually remove
 rm -f ~/.local/bin/mem
 rm -rf ~/.ai-memoria
-```
----
+\`\`\`
 
 ## License
 
