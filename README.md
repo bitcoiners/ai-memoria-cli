@@ -343,3 +343,34 @@ rm -rf ~/.ai-memoria
 ## License
 
 MIT
+
+## Testing
+
+### Unit Tests
+\`\`\`bash
+make test-unit
+\`\`\`
+
+### Integration Tests
+Integration tests require a running Rails API server at `http://localhost:3000`.
+
+First, start the Rails API:
+\`\`\`bash
+cd ../api
+rails server
+\`\`\`
+
+Then run the integration tests:
+\`\`\`bash
+make test-integration
+\`\`\`
+
+### All Tests
+\`\`\`bash
+make test
+\`\`\`
+
+### Test Coverage
+\`\`\`bash
+make coverage
+\`\`\`

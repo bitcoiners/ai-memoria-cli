@@ -19,6 +19,9 @@ type ConfigFile struct {
     DefaultProfile string `json:"default_profile"`
 }
 
+// GetConfigPath is exported for testing
+var GetConfigPath = getConfigPath
+
 func Load(apiKey, baseURL, profile string) *Config {
     cfg := &Config{
         APIKey:  apiKey,
