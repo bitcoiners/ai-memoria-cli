@@ -52,27 +52,29 @@ if ! git diff-index --quiet HEAD --; then
     fi
 fi
 
-# Build binaries
-echo "📦 Building binaries..."
+# Build binaries with version embedded
+echo "📦 Building binaries with version $VERSION..."
 mkdir -p "$RELEASE_DIR"
 
+LDFLAGS="-X main.Version=$VERSION"
+
 echo "  Building for Linux (amd64)..."
-GOOS=linux GOARCH=amd64 go build -o "$RELEASE_DIR/${BINARY_NAME}-linux-amd64" main.go
+GOOS=linux GOARCH=amd64 go build -ldflags="$LDFLAGS" -o "$RELEASE_DIR/${BINARY_NAME}-linux-amd64" main.go
 
 echo "  Building for Linux (arm64)..."
-GOOS=linux GOARCH=arm64 go build -o "$RELEASE_DIR/${BINARY_NAME}-linux-arm64" main.go
+GOOS=linux GOARCH=arm64 go build -ldflags="$LDFLAGS" -o "$RELEASE_DIR/${BINARY_NAME}-linux-arm64" main.go
 
 echo "  Building for macOS (amd64)..."
-GOOS=darwin GOARCH=amd64 go build -o "$RELEASE_DIR/${BINARY_NAME}-darwin-amd64" main.go
+GOOS=darwin GOARCH=amd64 go build -ldflags="$LDFLAGS" -o "$RELEASE_DIR/${BINARY_NAME}-darwin-amd64" main.go
 
 echo "  Building for macOS (arm64)..."
-GOOS=darwin GOARCH=arm64 go build -o "$RELEASE_DIR/${BINARY_NAME}-darwin-arm64" main.go
+GOOS=darwin GOARCH=arm64 go build -ldflags="$LDFLAGS" -o "$RELEASE_DIR/${BINARY_NAME}-darwin-arm64" main.go
 
 echo "  Building for Windows (amd64)..."
-GOOS=windows GOARCH=amd64 go build -o "$RELEASE_DIR/${BINARY_NAME}-windows-amd64.exe" main.go
+GOOS=windows GOARCH=amd64 go build -ldflags="$LDFLAGS" -o "$RELEASE_DIR/${BINARY_NAME}-windows-amd64.exe" main.go
 
 echo "  Building for Windows (arm64)..."
-GOOS=windows GOARCH=arm64 go build -o "$RELEASE_DIR/${BINARY_NAME}-windows-arm64.exe" main.go
+GOOS=windows GOARCH=arm64 go build -ldflags="$LDFLAGS" -o "$RELEASE_DIR/${BINARY_NAME}-windows-arm64.exe" main.go
 
 # Create checksums
 echo "🔐 Creating checksums..."
@@ -131,6 +133,8 @@ if command -v gh &> /dev/null; then
 ## What's New in $VERSION
 
 ### Added
+- Version flag (\`--version\`) to display current version
+- Version embedded in binaries at build time
 - Comprehensive unit tests with 81%+ coverage
 - Integration tests against real Rails API
 - Uninstall command (\`mem uninstall\`)
@@ -152,6 +156,12 @@ if command -v gh &> /dev/null; then
 
 \`\`\`bash
 curl -sSL https://raw.githubusercontent.com/bitcoiners/ai-memoria-cli/main/get.sh | bash
+\`\`\`
+
+## Verify Version
+
+\`\`\`bash
+mem --version
 \`\`\`
 
 ## Checksums

@@ -13,16 +13,25 @@ import (
     "github.com/bitcoiners/ai-memoria-cli/internal/utils"
 )
 
+// Version is set at build time with -ldflags
+var Version = "dev"
+
 var (
     apiKey  = flag.String("api-key", "", "API key for authentication")
     baseURL = flag.String("base-url", "", "API base URL")
     profile = flag.String("profile", "", "Configuration profile (development/production)")
     jsonOut = flag.Bool("json", false, "Output in JSON format")
+    version = flag.Bool("version", false, "Show version information")
     help    = flag.Bool("help", false, "Show help")
 )
 
 func main() {
     flag.Parse()
+    
+    if *version {
+        fmt.Printf("AI Memoria CLI version %s\n", Version)
+        os.Exit(0)
+    }
     
     if *jsonOut {
         utils.CurrentFormat = utils.FormatJSON
@@ -122,17 +131,18 @@ func handleStatus() {
 }
 
 func printHelp() {
-    fmt.Println(`AI Memoria CLI - Command line interface for AI Memoria
+    fmt.Printf(`AI Memoria CLI version %s - Command line interface for AI Memoria
 
 Usage:
   mem [global options] <command> [arguments] [options]
 
 Global Options:
+  --version        Show version information
+  --help           Show this help message
   --api-key KEY    API key for authentication (or AI_MEMORIA_API_KEY env)
   --base-url URL   API base URL (or AI_MEMORIA_API_URL env, default: http://localhost:3000)
   --profile NAME   Configuration profile (development/production)
   --json           Output in JSON format
-  --help           Show this help message
 
 Commands:
   auth             Authentication commands
@@ -148,10 +158,11 @@ Commands:
   uninstall        Remove AI Memoria CLI from your system
 
 Examples:
+  mem --version
   mem auth login --email dev@ai-memoria.com --password dev123
   mem auth whoami
   mem users create --email new@example.com --username newuser --name "New User" --password pass123
   mem status
   mem --profile production auth whoami
-  mem uninstall`)
+  mem uninstall`, Version)
 }

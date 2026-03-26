@@ -1,28 +1,31 @@
 BINARY_NAME=mem
 PROJECT_NAME=ai-memoria-cli
+VERSION=$(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
+BUILD_TIME=$(shell date -u '+%Y-%m-%d_%H:%M:%S')
+LDFLAGS=-ldflags "-X main.Version=${VERSION}"
 
 .PHONY: build clean run test deps test-unit test-integration install uninstall coverage release
 
 build:
-	go build -o bin/$(BINARY_NAME) main.go
+	go build $(LDFLAGS) -o bin/$(BINARY_NAME) main.go
 
 build-all:
-	GOOS=linux GOARCH=amd64 go build -o bin/$(BINARY_NAME)-linux-amd64
-	GOOS=linux GOARCH=arm64 go build -o bin/$(BINARY_NAME)-linux-arm64
-	GOOS=darwin GOARCH=amd64 go build -o bin/$(BINARY_NAME)-darwin-amd64
-	GOOS=darwin GOARCH=arm64 go build -o bin/$(BINARY_NAME)-darwin-arm64
-	GOOS=windows GOARCH=amd64 go build -o bin/$(BINARY_NAME)-windows-amd64.exe
-	GOOS=windows GOARCH=arm64 go build -o bin/$(BINARY_NAME)-windows-arm64.exe
+	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o bin/$(BINARY_NAME)-linux-amd64 main.go
+	GOOS=linux GOARCH=arm64 go build $(LDFLAGS) -o bin/$(BINARY_NAME)-linux-arm64 main.go
+	GOOS=darwin GOARCH=amd64 go build $(LDFLAGS) -o bin/$(BINARY_NAME)-darwin-amd64 main.go
+	GOOS=darwin GOARCH=arm64 go build $(LDFLAGS) -o bin/$(BINARY_NAME)-darwin-arm64 main.go
+	GOOS=windows GOARCH=amd64 go build $(LDFLAGS) -o bin/$(BINARY_NAME)-windows-amd64.exe main.go
+	GOOS=windows GOARCH=arm64 go build $(LDFLAGS) -o bin/$(BINARY_NAME)-windows-arm64.exe main.go
 
 install: build
 	@mkdir -p ~/.local/bin
 	@cp bin/$(BINARY_NAME) ~/.local/bin/
-	@echo "✅ Installed to ~/.local/bin/$(BINARY_NAME)"
+	@echo "✅ Installed to ~/.local/bin/$(BINARY_NAME) (version $(VERSION))"
 	@echo ""
 	@echo "Make sure ~/.local/bin is in your PATH. Add this to your ~/.bashrc or ~/.zshrc:"
 	@echo "  export PATH=\$$PATH:~/.local/bin"
 	@echo ""
-	@echo "Try it out: $(BINARY_NAME) --help"
+	@echo "Try it out: $(BINARY_NAME) --version"
 
 uninstall:
 	@rm -f ~/.local/bin/$(BINARY_NAME)
@@ -65,5 +68,5 @@ release:
 	./release.sh $(VERSION)
 
 dev: build
-	@echo "Running development build..."
-	@./bin/$(BINARY_NAME) --help
+	@echo "Running development build (version $(VERSION))..."
+	@./bin/$(BINARY_NAME) --version
