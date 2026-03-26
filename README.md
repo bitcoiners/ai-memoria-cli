@@ -75,6 +75,123 @@ GOOS=darwin GOARCH=arm64 go build -o mem-darwin-arm64 main.go
 GOOS=windows GOARCH=amd64 go build -o mem-windows-amd64.exe main.go
 \`\`\`
 
+## Creating GitHub Releases
+
+### Prerequisites
+
+1. Install [GitHub CLI](https://cli.github.com/):
+   \`\`\`bash
+   # Ubuntu/Debian
+   curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+   echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+   sudo apt update
+   sudo apt install gh
+   
+   # macOS
+   brew install gh
+   
+   # Windows (using winget)
+   winget install --id GitHub.cli
+   \`\`\`
+
+2. Authenticate with GitHub:
+   \`\`\`bash
+   gh auth login
+   \`\`\`
+   Follow the prompts to authenticate with your GitHub account.
+
+### Creating a Release
+
+#### Step 1: Ensure all changes are committed
+\`\`\`bash
+git status
+git add .
+git commit -m "Your commit message"
+git push origin main
+\`\`\`
+
+#### Step 2: Create and push a version tag
+\`\`\`bash
+# Create a tag (using semantic versioning)
+git tag v0.1.0
+
+# Push the tag to GitHub
+git push origin v0.1.0
+\`\`\`
+
+#### Step 3: Build binaries for the release
+\`\`\`bash
+# Build all platform binaries
+./build-release.sh v0.1.0
+
+# Or use make
+make release VERSION=v0.1.0
+\`\`\`
+
+#### Step 4: Create GitHub Release
+
+**Using GitHub CLI (automated):**
+\`\`\`bash
+# Create release with all binaries
+gh release create v0.1.0 \
+  --title "AI Memoria CLI v0.1.0" \
+  --notes "Initial release
+
+Features:
+- Token-based authentication
+- User management
+- Status checks
+- JSON output support
+- Profile support
+
+Installation:
+\`\`\`bash
+curl -sSL https://raw.githubusercontent.com/bitcoiners/ai-memoria-cli/main/get.sh | bash
+\`\`\`" \
+  releases/v0.1.0/*
+\`\`\`
+
+**Using GitHub Web Interface (manual):**
+1. Go to: https://github.com/bitcoiners/ai-memoria-cli/releases
+2. Click "Create a new release"
+3. Select the tag you created (e.g., `v0.1.0`)
+4. Enter a title: "AI Memoria CLI v0.1.0"
+5. Add release notes
+6. Drag and drop all files from `releases/v0.1.0/` into the attachments area
+7. Click "Publish release"
+
+### Automated Release Script
+
+Use the included `release.sh` script to automate the entire process:
+\`\`\`bash
+# Make the script executable
+chmod +x release.sh
+
+# Create release (automates steps 1-4)
+./release.sh v0.1.0
+
+# Or use make
+make release VERSION=v0.1.0
+\`\`\`
+
+### Release Checklist
+
+- [ ] All tests passing (`make test`)
+- [ ] Code is committed and pushed
+- [ ] Version tag is created and pushed
+- [ ] Binaries are built for all platforms
+- [ ] Checksums are generated
+- [ ] Release notes are written
+- [ ] Release is published on GitHub
+- [ ] Installation instructions are tested
+
+### Versioning Guidelines
+
+Follow [Semantic Versioning](https://semver.org/):
+- **MAJOR** version (v1.0.0): Incompatible API changes
+- **MINOR** version (v0.1.0): Backward-compatible functionality
+- **PATCH** version (v0.1.1): Backward-compatible bug fixes
+
 ## Post-Installation
 
 Make sure `~/.local/bin` is in your PATH. Add this to your `~/.bashrc` or `~/.zshrc`:
@@ -189,10 +306,26 @@ make coverage
 ├── tests/              # Test files
 │   ├── integration/    # Integration tests
 │   └── mock/           # Mock server for testing
+├── releases/           # Release packages
 ├── Makefile            # Build automation
 ├── go.mod              # Go module definition
-└── main.go             # Entry point
+├── main.go             # Entry point
+├── install.sh          # Binary installer
+├── get.sh              # One-liner installer
+├── build-release.sh    # Release builder
+├── release.sh          # GitHub release automation
+├── CHANGELOG.md        # Version history
+└── README.md           # This file
 \`\`\`
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests: `make test`
+5. Commit and push
+6. Create a pull request
 
 ## License
 
