@@ -31,3 +31,17 @@ go.work.sum
 ~/.ai-memoria/
 *.key
 *.pem
+
+# Installation
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+.idea/
+.vscode/
+*.swp
+.DS_Store

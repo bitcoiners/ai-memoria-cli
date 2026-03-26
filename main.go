@@ -60,7 +60,7 @@ func main() {
 
 func handleAuth(cfg *config.Config, args []string) {
     if len(args) < 1 {
-        fmt.Println("Usage: ai-memoria-cli auth login|logout|whoami [options]")
+        fmt.Println("Usage: mem auth login|logout|whoami [options]")
         os.Exit(1)
     }
     
@@ -95,7 +95,7 @@ func printHelp() {
     fmt.Println(`AI Memoria CLI - Command line interface for AI Memoria
 
 Usage:
-  ai-memoria-cli [global options] <command> [arguments] [options]
+  mem [global options] <command> [arguments] [options]
 
 Global Options:
   --api-key KEY    API key for authentication (or AI_MEMORIA_API_KEY env)
@@ -116,9 +116,9 @@ Commands:
   status           Check API connectivity and health
 
 Examples:
-  ai-memoria-cli auth login --email dev@ai-memoria.com --password dev123
-  ai-memoria-cli auth whoami
-  ai-memoria-cli users create --email new@example.com --username newuser --name "New User" --password pass123
-  ai-memoria-cli status
-  ai-memoria-cli --profile production auth whoami`)
+  mem auth login --email dev@ai-memoria.com --password dev123
+  mem auth whoami
+  mem users create --email new@example.com --username newuser --name "New User" --password pass123
+  mem status
+  mem --profile production auth whoami`)
 }
