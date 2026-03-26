@@ -35,6 +35,7 @@ cat > ~/.ai-memoria/config.json << 'EOF'
   },
   "default_profile": "development"
 }
+EOF
 ```
 
 ### Environment Variables

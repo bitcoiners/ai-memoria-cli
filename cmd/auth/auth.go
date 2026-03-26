@@ -26,9 +26,16 @@ func HandleLogin(cfg *config.Config, email, password string) {
         os.Exit(1)
     }
     
+    // Convert ID to int
+    userID, err := tokenResp.User.GetID()
+    if err != nil {
+        utils.PrintError(fmt.Sprintf("Failed to parse user ID: %v", err))
+        os.Exit(1)
+    }
+    
     // Save token and user ID to config
     cfg.APIKey = tokenResp.Token
-    cfg.UserID = tokenResp.User.ID
+    cfg.UserID = userID
     if err := config.Save(cfg); err != nil {
         utils.PrintError(fmt.Sprintf("Failed to save config: %v", err))
         os.Exit(1)
@@ -94,7 +101,7 @@ func HandleWhoami(cfg *config.Config) {
         utils.PrintJSON(user)
     } else {
         fmt.Println("\nCurrent User:")
-        fmt.Printf("  ID:       %d\n", user.ID)
+        fmt.Printf("  ID:       %v\n", user.ID)
         fmt.Printf("  Email:    %s\n", user.Email)
         fmt.Printf("  Username: %s\n", user.Username)
         fmt.Printf("  Name:     %s\n", user.Name)

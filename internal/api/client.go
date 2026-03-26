@@ -83,7 +83,7 @@ func (c *Client) RevokeToken() error {
     
     if resp.StatusCode != http.StatusOK {
         body, _ := io.ReadAll(resp.Body)
-        return nil, fmt.Errorf("API error (status %d): %s", resp.StatusCode, string(body))
+        return fmt.Errorf("API error (status %d): %s", resp.StatusCode, string(body))
     }
     
     return nil
@@ -181,6 +181,7 @@ func (c *Client) CheckStatus() (map[string]interface{}, error) {
     
     var status map[string]interface{}
     if err := json.NewDecoder(resp.Body).Decode(&status); err != nil {
+        // If response is not JSON, just return basic status
         return map[string]interface{}{
             "status": resp.Status,
             "code":   resp.StatusCode,
