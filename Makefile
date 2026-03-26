@@ -1,7 +1,7 @@
 BINARY_NAME=mem
 PROJECT_NAME=ai-memoria-cli
 
-.PHONY: build clean run test deps test-unit test-integration install uninstall
+.PHONY: build clean run test deps test-unit test-integration install uninstall coverage
 
 build:
 	go build -o bin/$(BINARY_NAME) main.go
@@ -31,7 +31,7 @@ uninstall:
 
 clean:
 	rm -rf bin/
-	rm -f coverage.out
+	rm -f coverage.out coverage.html
 
 run:
 	go run main.go $(ARGS)
@@ -54,8 +54,12 @@ deps:
 	go mod download
 
 coverage:
-	go test -coverprofile=coverage.out ./tests/unit/...
-	go tool cover -html=coverage.out
+	@echo "📊 Generating coverage report for internal packages..."
+	@go test -coverprofile=coverage.out -coverpkg=./internal/... ./tests/unit/...
+	@go tool cover -html=coverage.out -o coverage.html
+	@echo "✅ Coverage report generated: coverage.html"
+	@echo "Opening in browser..."
+	@xdg-open coverage.html 2>/dev/null || open coverage.html 2>/dev/null || echo "Open coverage.html manually"
 
 dev: build
 	@echo "Running development build..."

@@ -1,0 +1,518 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>api: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/bitcoiners/ai-memoria-cli/internal/api/client.go (81.1%)</option>
+				
+				<option value="file1">github.com/bitcoiners/ai-memoria-cli/internal/config/config.go (87.5%)</option>
+				
+				<option value="file2">github.com/bitcoiners/ai-memoria-cli/internal/models/user.go (85.7%)</option>
+				
+				<option value="file3">github.com/bitcoiners/ai-memoria-cli/internal/utils/output.go (87.5%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package api
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "io"
+    "net/http"
+    "time"
+    
+    "github.com/bitcoiners/ai-memoria-cli/internal/config"
+    "github.com/bitcoiners/ai-memoria-cli/internal/models"
+)
+
+type Client struct {
+    config *config.Config
+    http   *http.Client
+}
+
+func NewClient(cfg *config.Config) *Client <span class="cov8" title="1">{
+    return &amp;Client{
+        config: cfg,
+        http: &amp;http.Client{
+            Timeout: 30 * time.Second,
+        },
+    }
+}</span>
+
+func (c *Client) GetToken(email, password string) (*models.TokenResponse, error) <span class="cov8" title="1">{
+    reqBody := models.TokenRequest{
+        Email:    email,
+        Password: password,
+    }
+    
+    jsonBody, err := json.Marshal(reqBody)
+    if err != nil </span><span class="cov0" title="0">{
+        return nil, fmt.Errorf("failed to marshal request: %w", err)
+    }</span>
+    
+    <span class="cov8" title="1">url := fmt.Sprintf("%s/token", c.config.BaseURL)
+    req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonBody))
+    if err != nil </span><span class="cov0" title="0">{
+        return nil, fmt.Errorf("failed to create request: %w", err)
+    }</span>
+    
+    <span class="cov8" title="1">req.Header.Set("Content-Type", "application/json")
+    req.Header.Set("Accept", "application/json")
+    
+    resp, err := c.http.Do(req)
+    if err != nil </span><span class="cov0" title="0">{
+        return nil, fmt.Errorf("failed to send request: %w", err)
+    }</span>
+    <span class="cov8" title="1">defer resp.Body.Close()
+    
+    if resp.StatusCode != http.StatusCreated </span><span class="cov8" title="1">{
+        body, _ := io.ReadAll(resp.Body)
+        return nil, fmt.Errorf("API error (status %d): %s", resp.StatusCode, string(body))
+    }</span>
+    
+    <span class="cov8" title="1">var tokenResp models.TokenResponse
+    if err := json.NewDecoder(resp.Body).Decode(&amp;tokenResp); err != nil </span><span class="cov0" title="0">{
+        return nil, fmt.Errorf("failed to decode response: %w", err)
+    }</span>
+    
+    <span class="cov8" title="1">return &amp;tokenResp, nil</span>
+}
+
+func (c *Client) RevokeToken() error <span class="cov8" title="1">{
+    url := fmt.Sprintf("%s/token", c.config.BaseURL)
+    req, err := http.NewRequest("DELETE", url, nil)
+    if err != nil </span><span class="cov0" title="0">{
+        return fmt.Errorf("failed to create request: %w", err)
+    }</span>
+    
+    <span class="cov8" title="1">req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.config.APIKey))
+    req.Header.Set("Accept", "application/json")
+    
+    resp, err := c.http.Do(req)
+    if err != nil </span><span class="cov0" title="0">{
+        return fmt.Errorf("failed to send request: %w", err)
+    }</span>
+    <span class="cov8" title="1">defer resp.Body.Close()
+    
+    if resp.StatusCode != http.StatusOK </span><span class="cov8" title="1">{
+        body, _ := io.ReadAll(resp.Body)
+        return fmt.Errorf("API error (status %d): %s", resp.StatusCode, string(body))
+    }</span>
+    
+    <span class="cov8" title="1">return nil</span>
+}
+
+func (c *Client) GetUser(userID int) (*models.User, error) <span class="cov8" title="1">{
+    url := fmt.Sprintf("%s/users/%d", c.config.BaseURL, userID)
+    req, err := http.NewRequest("GET", url, nil)
+    if err != nil </span><span class="cov0" title="0">{
+        return nil, fmt.Errorf("failed to create request: %w", err)
+    }</span>
+    
+    <span class="cov8" title="1">req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.config.APIKey))
+    req.Header.Set("Accept", "application/json")
+    
+    resp, err := c.http.Do(req)
+    if err != nil </span><span class="cov8" title="1">{
+        return nil, fmt.Errorf("failed to send request: %w", err)
+    }</span>
+    <span class="cov8" title="1">defer resp.Body.Close()
+    
+    if resp.StatusCode != http.StatusOK </span><span class="cov0" title="0">{
+        body, _ := io.ReadAll(resp.Body)
+        return nil, fmt.Errorf("API error (status %d): %s", resp.StatusCode, string(body))
+    }</span>
+    
+    <span class="cov8" title="1">var userResp models.UserResponse
+    if err := json.NewDecoder(resp.Body).Decode(&amp;userResp); err != nil </span><span class="cov0" title="0">{
+        return nil, fmt.Errorf("failed to decode response: %w", err)
+    }</span>
+    
+    <span class="cov8" title="1">return &amp;userResp.User, nil</span>
+}
+
+func (c *Client) GetCurrentUser() (*models.User, error) <span class="cov8" title="1">{
+    if c.config.UserID == 0 </span><span class="cov8" title="1">{
+        return nil, fmt.Errorf("user ID not found. Please log in again.")
+    }</span>
+    <span class="cov8" title="1">return c.GetUser(c.config.UserID)</span>
+}
+
+func (c *Client) CreateUser(user *models.CreateUserRequest) (*models.User, error) <span class="cov8" title="1">{
+    jsonBody, err := json.Marshal(map[string]interface{}{
+        "user": user,
+    })
+    if err != nil </span><span class="cov0" title="0">{
+        return nil, fmt.Errorf("failed to marshal request: %w", err)
+    }</span>
+    
+    <span class="cov8" title="1">url := fmt.Sprintf("%s/users", c.config.BaseURL)
+    req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonBody))
+    if err != nil </span><span class="cov0" title="0">{
+        return nil, fmt.Errorf("failed to create request: %w", err)
+    }</span>
+    
+    <span class="cov8" title="1">req.Header.Set("Content-Type", "application/json")
+    req.Header.Set("Accept", "application/json")
+    
+    // Add token if available (optional for public signup)
+    if c.config.APIKey != "" </span><span class="cov8" title="1">{
+        req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.config.APIKey))
+    }</span>
+    
+    <span class="cov8" title="1">resp, err := c.http.Do(req)
+    if err != nil </span><span class="cov0" title="0">{
+        return nil, fmt.Errorf("failed to send request: %w", err)
+    }</span>
+    <span class="cov8" title="1">defer resp.Body.Close()
+    
+    if resp.StatusCode != http.StatusCreated </span><span class="cov8" title="1">{
+        body, _ := io.ReadAll(resp.Body)
+        return nil, fmt.Errorf("API error (status %d): %s", resp.StatusCode, string(body))
+    }</span>
+    
+    <span class="cov8" title="1">var userResp models.UserResponse
+    if err := json.NewDecoder(resp.Body).Decode(&amp;userResp); err != nil </span><span class="cov0" title="0">{
+        return nil, fmt.Errorf("failed to decode response: %w", err)
+    }</span>
+    
+    <span class="cov8" title="1">return &amp;userResp.User, nil</span>
+}
+
+func (c *Client) CheckStatus() (map[string]interface{}, error) <span class="cov8" title="1">{
+    url := fmt.Sprintf("%s/up", c.config.BaseURL)
+    req, err := http.NewRequest("GET", url, nil)
+    if err != nil </span><span class="cov0" title="0">{
+        return nil, fmt.Errorf("failed to create request: %w", err)
+    }</span>
+    
+    <span class="cov8" title="1">resp, err := c.http.Do(req)
+    if err != nil </span><span class="cov0" title="0">{
+        return nil, fmt.Errorf("failed to connect to API: %w", err)
+    }</span>
+    <span class="cov8" title="1">defer resp.Body.Close()
+    
+    var status map[string]interface{}
+    if err := json.NewDecoder(resp.Body).Decode(&amp;status); err != nil </span><span class="cov0" title="0">{
+        // If response is not JSON, just return basic status
+        return map[string]interface{}{
+            "status": resp.Status,
+            "code":   resp.StatusCode,
+        }, nil
+    }</span>
+    
+    <span class="cov8" title="1">return status, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package config
+
+import (
+    "encoding/json"
+    "os"
+    "path/filepath"
+)
+
+type Config struct {
+    APIKey  string `json:"api_key"`
+    BaseURL string `json:"base_url"`
+    Profile string `json:"profile"`
+    UserID  int    `json:"user_id,omitempty"`
+}
+
+type ConfigFile struct {
+    Development   *Config `json:"development,omitempty"`
+    Production    *Config `json:"production,omitempty"`
+    DefaultProfile string `json:"default_profile"`
+}
+
+// GetConfigPath is exported for testing
+var GetConfigPath = getConfigPath
+
+func Load(apiKey, baseURL, profile string) *Config <span class="cov8" title="1">{
+    cfg := &amp;Config{
+        APIKey:  apiKey,
+        BaseURL: baseURL,
+        Profile: profile,
+    }
+
+    // Environment variables override
+    if cfg.APIKey == "" </span><span class="cov8" title="1">{
+        cfg.APIKey = os.Getenv("AI_MEMORIA_API_KEY")
+    }</span>
+    <span class="cov8" title="1">if cfg.BaseURL == "" </span><span class="cov8" title="1">{
+        cfg.BaseURL = os.Getenv("AI_MEMORIA_API_URL")
+    }</span>
+    <span class="cov8" title="1">if cfg.Profile == "" </span><span class="cov8" title="1">{
+        cfg.Profile = os.Getenv("AI_MEMORIA_PROFILE")
+    }</span>
+    
+    // Default profile
+    <span class="cov8" title="1">if cfg.Profile == "" </span><span class="cov8" title="1">{
+        cfg.Profile = "development"
+    }</span>
+
+    // Load from config file
+    <span class="cov8" title="1">configPath := getConfigPath()
+    if data, err := os.ReadFile(configPath); err == nil </span><span class="cov8" title="1">{
+        var fileConfig ConfigFile
+        if err := json.Unmarshal(data, &amp;fileConfig); err == nil </span><span class="cov8" title="1">{
+            var profileConfig *Config
+            if cfg.Profile == "development" </span><span class="cov8" title="1">{
+                profileConfig = fileConfig.Development
+            }</span> else<span class="cov8" title="1"> if cfg.Profile == "production" </span><span class="cov8" title="1">{
+                profileConfig = fileConfig.Production
+            }</span>
+            
+            <span class="cov8" title="1">if profileConfig != nil </span><span class="cov8" title="1">{
+                if cfg.APIKey == "" </span><span class="cov8" title="1">{
+                    cfg.APIKey = profileConfig.APIKey
+                }</span>
+                <span class="cov8" title="1">if cfg.BaseURL == "" </span><span class="cov8" title="1">{
+                    cfg.BaseURL = profileConfig.BaseURL
+                }</span>
+                <span class="cov8" title="1">if cfg.UserID == 0 </span><span class="cov8" title="1">{
+                    cfg.UserID = profileConfig.UserID
+                }</span>
+            }
+        }
+    }
+
+    // Final defaults
+    <span class="cov8" title="1">if cfg.BaseURL == "" </span><span class="cov0" title="0">{
+        if cfg.Profile == "production" </span><span class="cov0" title="0">{
+            cfg.BaseURL = "https://api.ai-memoria.com"
+        }</span> else<span class="cov0" title="0"> {
+            cfg.BaseURL = "http://localhost:3000"
+        }</span>
+    }
+
+    <span class="cov8" title="1">return cfg</span>
+}
+
+func Save(cfg *Config) error <span class="cov8" title="1">{
+    configPath := getConfigPath()
+    
+    // Create directory if it doesn't exist
+    if err := os.MkdirAll(filepath.Dir(configPath), 0700); err != nil </span><span class="cov0" title="0">{
+        return err
+    }</span>
+    
+    // Read existing config if any
+    <span class="cov8" title="1">var fileConfig ConfigFile
+    if data, err := os.ReadFile(configPath); err == nil </span><span class="cov8" title="1">{
+        json.Unmarshal(data, &amp;fileConfig)
+    }</span>
+    
+    // Update the appropriate profile
+    <span class="cov8" title="1">if cfg.Profile == "development" </span><span class="cov8" title="1">{
+        fileConfig.Development = cfg
+    }</span> else<span class="cov8" title="1"> if cfg.Profile == "production" </span><span class="cov8" title="1">{
+        fileConfig.Production = cfg
+    }</span>
+    
+    // Save back to file
+    <span class="cov8" title="1">data, err := json.MarshalIndent(fileConfig, "", "  ")
+    if err != nil </span><span class="cov0" title="0">{
+        return err
+    }</span>
+    
+    <span class="cov8" title="1">return os.WriteFile(configPath, data, 0600)</span>
+}
+
+func getConfigPath() string <span class="cov8" title="1">{
+    home, err := os.UserHomeDir()
+    if err != nil </span><span class="cov0" title="0">{
+        return ".ai-memoria/config.json"
+    }</span>
+    <span class="cov8" title="1">return filepath.Join(home, ".ai-memoria", "config.json")</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package models
+
+import "fmt"
+
+type User struct {
+    ID       interface{} `json:"id"` // Can be string or int
+    Email    string      `json:"email"`
+    Username string      `json:"username"`
+    Name     string      `json:"name"`
+}
+
+// GetID returns the user ID as an int
+func (u *User) GetID() (int, error) <span class="cov8" title="1">{
+    switch v := u.ID.(type) </span>{
+    case float64:<span class="cov8" title="1">
+        return int(v), nil</span>
+    case int:<span class="cov8" title="1">
+        return v, nil</span>
+    case string:<span class="cov8" title="1">
+        // Try to parse string to int
+        var id int
+        _, err := fmt.Sscan(v, &amp;id)
+        return id, err</span>
+    default:<span class="cov0" title="0">
+        return 0, fmt.Errorf("unexpected ID type: %T", u.ID)</span>
+    }
+}
+
+type UserResponse struct {
+    User User `json:"user"`
+}
+
+type CreateUserRequest struct {
+    Email                string `json:"email"`
+    Password             string `json:"password"`
+    PasswordConfirmation string `json:"password_confirmation"`
+    Username             string `json:"username"`
+    Name                 string `json:"name"`
+}
+
+type TokenRequest struct {
+    Email    string `json:"email"`
+    Password string `json:"password"`
+}
+
+type TokenResponse struct {
+    Token string `json:"token"`
+    User  User   `json:"user"`
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package utils
+
+import (
+    "encoding/json"
+    "fmt"
+    "os"
+)
+
+type OutputFormat string
+
+const (
+    FormatJSON  OutputFormat = "json"
+    FormatTable OutputFormat = "table"
+)
+
+var CurrentFormat = FormatTable
+
+func PrintJSON(data interface{}) <span class="cov8" title="1">{
+    encoder := json.NewEncoder(os.Stdout)
+    encoder.SetIndent("", "  ")
+    if err := encoder.Encode(data); err != nil </span><span class="cov0" title="0">{
+        fmt.Fprintf(os.Stderr, "Error encoding JSON: %v\n", err)
+    }</span>
+}
+
+func PrintSuccess(message string) <span class="cov8" title="1">{
+    fmt.Printf("✅ %s\n", message)
+}</span>
+
+func PrintError(message string) <span class="cov8" title="1">{
+    fmt.Fprintf(os.Stderr, "❌ Error: %s\n", message)
+}</span>
+
+func PrintInfo(message string) <span class="cov8" title="1">{
+    fmt.Printf("ℹ️  %s\n", message)
+}</span>
+
+func PrintWarning(message string) <span class="cov8" title="1">{
+    fmt.Printf("⚠️  %s\n", message)
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
