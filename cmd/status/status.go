@@ -9,7 +9,7 @@ import (
     "github.com/bitcoiners/ai-memoria-cli/internal/utils"
 )
 
-func Handle(cfg *config.Config, args []string) {
+func Handle(cfg *config.Config) {
     client := api.NewClient(cfg)
     
     status, err := client.CheckStatus()

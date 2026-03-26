@@ -327,6 +327,19 @@ make coverage
 5. Commit and push
 6. Create a pull request
 
+## Uninstall
+
+To completely remove AI Memoria CLI and its configuration:
+
+```bash
+# If you have the CLI installed
+mem uninstall
+
+# Or manually remove
+rm -f ~/.local/bin/mem
+rm -rf ~/.ai-memoria
+```
+
 ## License
 
 MIT

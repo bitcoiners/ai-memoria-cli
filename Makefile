@@ -62,3 +62,12 @@ dev: build
 # Create GitHub release
 release:
 	./release.sh $(VERSION)
+
+# Uninstall via the CLI (if installed)
+uninstall-cli:
+	@echo "Running uninstall command..."
+	@./bin/$(BINARY_NAME) uninstall || echo "CLI not found in current directory"
+	@echo ""
+	@echo "If the CLI wasn't in PATH, you may need to manually remove:"
+	@echo "  rm -f ~/.local/bin/$(BINARY_NAME)"
+	@echo "  rm -rf ~/.ai-memoria"

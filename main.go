@@ -6,6 +6,7 @@ import (
     "os"
     
     "github.com/bitcoiners/ai-memoria-cli/cmd/auth"
+    "github.com/bitcoiners/ai-memoria-cli/cmd/uninstall"
     "github.com/bitcoiners/ai-memoria-cli/cmd/users"
     "github.com/bitcoiners/ai-memoria-cli/cmd/status"
     "github.com/bitcoiners/ai-memoria-cli/internal/config"
@@ -37,20 +38,19 @@ func main() {
         os.Exit(1)
     }
     
-    // Load configuration
-    cfg := config.Load(*apiKey, *baseURL, *profile)
-    
     // Handle commands
     command := flag.Arg(0)
     args := flag.Args()[1:]
     
     switch command {
     case "auth":
-        handleAuth(cfg, args)
+        handleAuth(args)
     case "users":
-        users.Handle(cfg, args)
+        handleUsers(args)
     case "status":
-        status.Handle(cfg, args)
+        handleStatus()
+    case "uninstall":
+        uninstall.Handle()
     default:
         fmt.Printf("Unknown command: %s\n\n", command)
         printHelp()
@@ -58,7 +58,7 @@ func main() {
     }
 }
 
-func handleAuth(cfg *config.Config, args []string) {
+func handleAuth(args []string) {
     if len(args) < 1 {
         fmt.Println("Usage: mem auth login|logout|whoami [options]")
         os.Exit(1)
@@ -66,6 +66,9 @@ func handleAuth(cfg *config.Config, args []string) {
     
     subcommand := args[0]
     subArgs := args[1:]
+    
+    // Load configuration
+    cfg := config.Load(*apiKey, *baseURL, *profile)
     
     switch subcommand {
     case "login":
@@ -91,6 +94,33 @@ func handleAuth(cfg *config.Config, args []string) {
     }
 }
 
+func handleUsers(args []string) {
+    if len(args) < 1 {
+        fmt.Println("Usage: mem users create [options]")
+        os.Exit(1)
+    }
+    
+    subcommand := args[0]
+    subArgs := args[1:]
+    
+    // Load configuration
+    cfg := config.Load(*apiKey, *baseURL, *profile)
+    
+    switch subcommand {
+    case "create":
+        users.HandleCreate(cfg, subArgs)
+    default:
+        fmt.Printf("Unknown users command: %s\n", subcommand)
+        os.Exit(1)
+    }
+}
+
+func handleStatus() {
+    // Load configuration
+    cfg := config.Load(*apiKey, *baseURL, *profile)
+    status.Handle(cfg)
+}
+
 func printHelp() {
     fmt.Println(`AI Memoria CLI - Command line interface for AI Memoria
 
@@ -114,11 +144,14 @@ Commands:
     users create --email EMAIL --username USER --name NAME --password PASS  Create a new user
     
   status           Check API connectivity and health
+  
+  uninstall        Remove AI Memoria CLI from your system
 
 Examples:
   mem auth login --email dev@ai-memoria.com --password dev123
   mem auth whoami
   mem users create --email new@example.com --username newuser --name "New User" --password pass123
   mem status
-  mem --profile production auth whoami`)
+  mem --profile production auth whoami
+  mem uninstall`)
 }

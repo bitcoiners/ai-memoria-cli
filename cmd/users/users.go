@@ -11,25 +11,7 @@ import (
     "github.com/bitcoiners/ai-memoria-cli/internal/utils"
 )
 
-func Handle(cfg *config.Config, args []string) {
-    if len(args) < 1 {
-        fmt.Println("Usage: ai-memoria-cli users create [options]")
-        os.Exit(1)
-    }
-    
-    subcommand := args[0]
-    subArgs := args[1:]
-    
-    switch subcommand {
-    case "create":
-        createUser(cfg, subArgs)
-    default:
-        fmt.Printf("Unknown users command: %s\n", subcommand)
-        os.Exit(1)
-    }
-}
-
-func createUser(cfg *config.Config, args []string) {
+func HandleCreate(cfg *config.Config, args []string) {
     fs := flag.NewFlagSet("create", flag.ExitOnError)
     email := fs.String("email", "", "User email address")
     username := fs.String("username", "", "Username")
@@ -62,6 +44,6 @@ func createUser(cfg *config.Config, args []string) {
     if utils.CurrentFormat == utils.FormatJSON {
         utils.PrintJSON(user)
     } else {
-        utils.PrintSuccess(fmt.Sprintf("User created: %s (ID: %d)", user.Email, user.ID))
+        utils.PrintSuccess(fmt.Sprintf("User created: %s (ID: %v)", user.Email, user.ID))
     }
 }
