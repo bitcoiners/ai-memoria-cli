@@ -84,10 +84,26 @@ echo -e "\n✅ Binaries built in $RELEASE_DIR/"
 ls -lh "$RELEASE_DIR/"
 echo ""
 
-# Create and push git tag
-echo "🏷️  Creating and pushing git tag $VERSION..."
-git tag -a "$VERSION" -m "Release $VERSION"
-git push origin "$VERSION"
+# Handle git tag
+if git rev-parse "$VERSION" >/dev/null 2>&1; then
+    echo -e "${YELLOW}⚠️  Tag $VERSION already exists${NC}"
+    read -p "Delete existing tag and create new one? (y/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo "Deleting existing tag..."
+        git tag -d "$VERSION"
+        git push origin ":refs/tags/$VERSION" 2>/dev/null || true
+        echo "Creating new tag..."
+        git tag -a "$VERSION" -m "Release $VERSION"
+        git push origin "$VERSION"
+    else
+        echo "Keeping existing tag."
+    fi
+else
+    echo "🏷️  Creating and pushing git tag $VERSION..."
+    git tag -a "$VERSION" -m "Release $VERSION"
+    git push origin "$VERSION"
+fi
 
 # Push any committed changes
 git push origin "$BRANCH" 2>/dev/null || true
@@ -95,6 +111,20 @@ git push origin "$BRANCH" 2>/dev/null || true
 # Check if gh CLI is installed
 if command -v gh &> /dev/null; then
     echo "📝 Creating GitHub release..."
+    
+    # Check if release already exists
+    if gh release view "$VERSION" &>/dev/null; then
+        echo -e "${YELLOW}⚠️  Release $VERSION already exists on GitHub${NC}"
+        read -p "Delete existing release and create new one? (y/n) " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            echo "Deleting existing release..."
+            gh release delete "$VERSION" -y
+        else
+            echo "Skipping release creation."
+            exit 0
+        fi
+    fi
     
     # Generate release notes
     RELEASE_NOTES=$(cat <<-END
