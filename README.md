@@ -6,11 +6,11 @@ Command line interface for AI Memoria API. The CLI is designed to be simple and 
 
 ### Option 1: One-liner (Recommended)
 
-\`\`\`bash
+```bash
 
 curl -sSL https://raw.githubusercontent.com/bitcoiners/ai-memoria-cli/main/get.sh | bash
 
-\`\`\`
+```
 
 ### Option 2: Download from GitHub Releases
 1. Download the binary for your platform from [releases](https://github.com/bitcoiners/ai-memoria-cli/releases)
@@ -18,7 +18,7 @@ curl -sSL https://raw.githubusercontent.com/bitcoiners/ai-memoria-cli/main/get.s
 
    **Linux/macOS:**
    
-\`\`\`bash
+```bash
    # Download (example for Linux amd64)
    wget https://github.com/bitcoiners/ai-memoria-cli/releases/download/v0.2.0/mem-linux-amd64 -O mem
    
@@ -32,33 +32,33 @@ curl -sSL https://raw.githubusercontent.com/bitcoiners/ai-memoria-cli/main/get.s
    # Verify installation
    mem --version
    
-\`\`\`
+```
 
    **Windows:**
-\`\`\`powershell
+```powershell
 
    # Download mem-windows-amd64.exe
    # Rename to mem.exe
    # Move to a directory in your PATH, e.g., C:\Users\YourName\bin\
    # Add that directory to your PATH environment variable
    
-\`\`\`
+```
 
 ### Option 3: Build from Source
-\`\`\`bash
+```bash
 
 git clone git@github.com:bitcoiners/ai-memoria-cli.git
 cd ai-memoria-cli
 make install
 
-\`\`\`
+```
 
 ### Option 4: Using Go Install
-\`\`\`bash
+```bash
 
 go install github.com/bitcoiners/ai-memoria-cli@latest
 
-\`\`\`
+```
 
 ## Building Binaries
 
@@ -69,9 +69,9 @@ make build
 This creates a binary at `bin/mem`
 
 ### Build for All Platforms (for releases)
-\`\`\`bash
+```bash
 make build-all
-\`\`\`
+```
 This creates binaries for:
 - Linux (amd64, arm64)
 - macOS (amd64, arm64)
@@ -86,17 +86,17 @@ Binaries will be in the `bin/` directory:
 - `mem-windows-arm64.exe`
 
 ### Build Release Package
-\`\`\`bash
+```bash
 # Build with version tag
 ./release.sh v1.0.0
 
 # Or use make
 make release VERSION=v1.0.0
-\`\`\`
+```
 This creates a `releases/` directory with all platform binaries and checksums.
 
 ### Manual Build
-\`\`\`bash
+```bash
 # Build for your current platform
 go build -o mem main.go
 
@@ -104,14 +104,14 @@ go build -o mem main.go
 GOOS=linux GOARCH=amd64 go build -o mem-linux-amd64 main.go
 GOOS=darwin GOARCH=arm64 go build -o mem-darwin-arm64 main.go
 GOOS=windows GOARCH=amd64 go build -o mem-windows-amd64.exe main.go
-\`\`\`
+```
 
 ## Creating GitHub Releases
 
 ### Prerequisites
 
 1. Install [GitHub CLI](https://cli.github.com/):
-   \`\`\`bash
+   ```bash
    # Ubuntu/Debian
    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
@@ -123,46 +123,46 @@ GOOS=windows GOARCH=amd64 go build -o mem-windows-amd64.exe main.go
    
    # Windows (using winget)
    winget install --id GitHub.cli
-   \`\`\`
+   ```
 
 2. Authenticate with GitHub:
-   \`\`\`bash
+   ```bash
    gh auth login
-   \`\`\`
+   ```
    Follow the prompts to authenticate with your GitHub account.
 
 ### Creating a Release
 
 #### Step 1: Ensure all changes are committed
-\`\`\`bash
+```bash
 git status
 git add .
 git commit -m "Your commit message"
 git push origin main
-\`\`\`
+```
 
 #### Step 2: Create and push a version tag
-\`\`\`bash
+```bash
 # Create a tag (using semantic versioning)
 git tag v0.1.0
 
 # Push the tag to GitHub
 git push origin v0.1.0
-\`\`\`
+```
 
 #### Step 3: Build binaries for the release
-\`\`\`bash
+```bash
 # Build all platform binaries
 ./release.sh v0.1.0
 
 # Or use make
 make release VERSION=v0.1.0
-\`\`\`
+```
 
 #### Step 4: Create GitHub Release
 
 **Using GitHub CLI (automated):**
-\`\`\`bash
+```bash
 # Create release with all binaries
 gh release create v0.1.0 \
   --title "AI Memoria CLI v0.1.0" \
@@ -176,11 +176,11 @@ Features:
 - Profile support
 
 Installation:
-\`\`\`bash
+```bash
 curl -sSL https://raw.githubusercontent.com/bitcoiners/ai-memoria-cli/main/get.sh | bash
-\`\`\`" \
+```" \
   releases/v0.1.0/*
-\`\`\`
+```
 
 **Using GitHub Web Interface (manual):**
 1. Go to: https://github.com/bitcoiners/ai-memoria-cli/releases
@@ -194,7 +194,7 @@ curl -sSL https://raw.githubusercontent.com/bitcoiners/ai-memoria-cli/main/get.s
 ### Automated Release Script
 
 Use the included `release.sh` script to automate the entire process:
-\`\`\`bash
+```bash
 # Make the script executable
 chmod +x release.sh
 
@@ -203,7 +203,7 @@ chmod +x release.sh
 
 # Or use make
 make release VERSION=v0.1.0
-\`\`\`
+```
 
 ### Release Checklist
 
@@ -226,14 +226,14 @@ Follow [Semantic Versioning](https://semver.org/):
 ## Post-Installation
 
 Make sure `~/.local/bin` is in your PATH. Add this to your `~/.bashrc` or `~/.zshrc`:
-\`\`\`bash
+```bash
 export PATH="$PATH:$HOME/.local/bin"
-\`\`\`
+```
 
 Then reload your shell:
-\`\`\`bash
+```bash
 source ~/.bashrc  # or source ~/.zshrc
-\`\`\`
+```
 
 ## Configuration
 
@@ -247,7 +247,7 @@ The CLI stores configuration in `~/.ai-memoria/config.json`
 ## Usage
 
 ### Authentication
-\`\`\`bash
+```bash
 # Login
 mem auth login --email user@example.com --password secret
 
@@ -256,40 +256,40 @@ mem auth whoami
 
 # Logout
 mem auth logout
-\`\`\`
+```
 
 ### User Management
-\`\`\`bash
+```bash
 # Create a new user (public signup)
 mem users create --email new@example.com --username newuser --name "New User" --password secret
-\`\`\`
+```
 
 ### Status
-\`\`\`bash
+```bash
 # Check API health
 mem status
-\`\`\`
+```
 
 ### JSON Output
 Use `--json` flag for machine-readable output:
-\`\`\`bash
+```bash
 mem --json auth whoami
-\`\`\`
+```
 
 ### Profiles
 Switch between development and production:
-\`\`\`bash
+```bash
 # Use production profile
 mem --profile production auth whoami
 
 # Or set environment variable
 export AI_MEMORIA_PROFILE=production
 mem auth whoami
-\`\`\`
+```
 
 ## Development
 
-\`\`\`bash
+```bash
 # Build
 make build
 
@@ -319,7 +319,7 @@ make clean
 
 # Run with coverage
 make coverage
-\`\`\`
+```
 
 ## Project Structure
 ```
@@ -361,14 +361,14 @@ make coverage
 
 To completely remove AI Memoria CLI:
 
-\`\`\`bash
+```bash
 # If you have the CLI installed
 mem uninstall
 
 # Or manually remove
 rm -f ~/.local/bin/mem
 rm -rf ~/.ai-memoria
-\`\`\`
+```
 
 ## License
 
@@ -377,30 +377,30 @@ MIT
 ## Testing
 
 ### Unit Tests
-\`\`\`bash
+```bash
 make test-unit
-\`\`\`
+```
 
 ### Integration Tests
 Integration tests require a running Rails API server at `http://localhost:3000`.
 
 First, start the Rails API:
-\`\`\`bash
+```bash
 cd ../api
 rails server
-\`\`\`
+```
 
 Then run the integration tests:
-\`\`\`bash
+```bash
 make test-integration
-\`\`\`
+```
 
 ### All Tests
-\`\`\`bash
+```bash
 make test
-\`\`\`
+```
 
 ### Test Coverage
-\`\`\`bash
+```bash
 make coverage
-\`\`\`
+```
