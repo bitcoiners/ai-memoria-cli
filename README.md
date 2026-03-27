@@ -5,8 +5,11 @@ Command line interface for AI Memoria API. The CLI is designed to be simple and 
 ## Quick Install
 
 ### Option 1: One-liner (Recommended)
+
 \`\`\`bash
+
 curl -sSL https://raw.githubusercontent.com/bitcoiners/ai-memoria-cli/main/get.sh | bash
+
 \`\`\`
 
 ### Option 2: Download from GitHub Releases
@@ -14,7 +17,8 @@ curl -sSL https://raw.githubusercontent.com/bitcoiners/ai-memoria-cli/main/get.s
 2. Install manually:
 
    **Linux/macOS:**
-   \`\`\`bash
+   
+\`\`\`bash
    # Download (example for Linux amd64)
    wget https://github.com/bitcoiners/ai-memoria-cli/releases/download/v0.2.0/mem-linux-amd64 -O mem
    
@@ -27,34 +31,41 @@ curl -sSL https://raw.githubusercontent.com/bitcoiners/ai-memoria-cli/main/get.s
    
    # Verify installation
    mem --version
-   \`\`\`
+   
+\`\`\`
 
    **Windows:**
-   \`\`\`powershell
+\`\`\`powershell
+
    # Download mem-windows-amd64.exe
    # Rename to mem.exe
    # Move to a directory in your PATH, e.g., C:\Users\YourName\bin\
    # Add that directory to your PATH environment variable
-   \`\`\`
+   
+\`\`\`
 
 ### Option 3: Build from Source
 \`\`\`bash
+
 git clone git@github.com:bitcoiners/ai-memoria-cli.git
 cd ai-memoria-cli
 make install
+
 \`\`\`
 
 ### Option 4: Using Go Install
 \`\`\`bash
+
 go install github.com/bitcoiners/ai-memoria-cli@latest
+
 \`\`\`
 
 ## Building Binaries
 
 ### Build for Current Platform
-\`\`\`bash
+```bash
 make build
-\`\`\`
+```
 This creates a binary at `bin/mem`
 
 ### Build for All Platforms (for releases)
@@ -311,7 +322,7 @@ make coverage
 \`\`\`
 
 ## Project Structure
-\`\`\`
+```
 .
 ├── bin/                 # Compiled binaries
 ├── cmd/                 # Command implementations
@@ -335,7 +346,7 @@ make coverage
 ├── release.sh          # GitHub release automation
 ├── CHANGELOG.md        # Version history
 └── README.md           # This file
-\`\`\`
+```
 
 ## Contributing
 
